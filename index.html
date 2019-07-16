@@ -5,7 +5,7 @@
     <title>Gamedev Canvas Workshop</title>
     <style>
     	* { padding: 0; margin: 0; }
-    	canvas { background: rgb(247, 176, 176); display: block; margin: 0 auto; }
+    	canvas { background: rgb(201, 199, 199); display: block; margin: 0 auto; }
     </style>
 </head>
 <body>
@@ -17,13 +17,46 @@
     const canvas = document.getElementById("myCanvas");
     const ctx = canvas.getContext("2d");
 
-    let x = canvas.width/2;
-    let y = canvas.height-30;
+    class Ball {
+        constructor(x, y, color="#FF0000", radius = 10) {
+            this.x = x
+            this.y = y
+            this.radius = radius
+            this.dx = -2
+            this.dy = -2
+        }
 
-    const ballRadius = 10;
+        move() {
+            this.x += this.dx
+            this.y += this.dy
+        }
+        render(ctx) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
 
-    let dx = 3;
-    let dy = -3;
+    // function drawBall() {
+        // ctx.beginPath();
+        // ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
+        // ctx.fillStyle = "#FF0000";
+        // ctx.fill();
+        // ctx.closePath();
+    // }
+
+
+    const ball = new Ball(canvas.width/2, canvas.height-30);
+
+    // let x = canvas.width/2;
+    // let y = canvas.height-30;
+
+    // const ballRadius = 10;
+
+    // let dx = 3;
+    // let dy = -3;
 
     const paddleHeight = 10;
     const paddleWidth = 75;
@@ -65,20 +98,20 @@
             for(let r=0; r<brickRowCount; r++) {
                 const b = bricks[c][r];
                 if(b.status >= 1) {
-                    if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
-                        dy = -dy;
+                    if(ball.x > b.x && ball.x < b.x+brickWidth && ball.y > b.y && ball.y < b.y+brickHeight) {
+                        ball.dy = -ball.dy;
                         // b.status = 0;
                         b.status--
                         score++;
-                        if(dx > 1) {
-                            dx = dx + .25
+                        if(ball.dx > 1) {
+                            ball.dx = ball.dx + .25
                         } else {
-                            dx = dx - .25
+                            ball.dx = ball.dx - .25
                         }
-                        if(dy > 1) {
-                            dy = dy + .25
+                        if(ball.dy > 1) {
+                            ball.dy = ball.dy + .25
                         } else {
-                            dy = dy - .25
+                            ball.dy = ball.dy - .25
                         }
                         if(score == brickRowCount*brickColumnCount) {
                             alert("YOU WIN, CONGRATULATIONS!");
@@ -132,13 +165,6 @@
         }
     }
 
-    function drawBall() {
-        ctx.beginPath();
-        ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-        ctx.fillStyle = "#0095DD";
-        ctx.fill();
-        ctx.closePath();
-    }
     function drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
@@ -168,21 +194,22 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBricks();
-        drawBall();
+        // drawBall();
+        ball.render(ctx);
         drawPaddle();
         drawScore();
         drawLives();
         collisionDetection();
         
-        if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
-            dx = -dx;
+        if(ball.x + ball.dx > canvas.width-ball.radius || ball.x + ball.dx < ball.radius) {
+            ball.dx = -ball.dx;
         }
-        if(y + dy < ballRadius) {
-            dy = -dy;
+        if(ball.y + ball.dy < ball.radius) {
+            ball.dy = -ball.dy;
         }
-        else if(y + dy > canvas.height-ballRadius) {
-            if(x > paddleX && x < paddleX + paddleWidth) {
-            dy = -dy;
+        else if(ball.y + ball.dy > canvas.height-ball.radius) {
+            if(ball.x > paddleX && ball.x < paddleX + paddleWidth) {
+            ball.dy = -ball.dy;
             }
             else {
             lives--;
@@ -191,10 +218,10 @@
                 document.location.reload();
             }
             else {
-                x = canvas.width/2;
-                y = canvas.height-30;
-                dx = 3;
-                dy = -3;
+                ball.x = canvas.width/2;
+                ball.y = canvas.height-30;
+                ball.dx = 3;
+                ball.dy = -3;
                 paddleX = (canvas.width-paddleWidth)/2;
             }
             }
@@ -207,8 +234,9 @@
             paddleX -= 7;
         }
         
-        x += dx;
-        y += dy;
+        // ball.x += ball.dx;
+        // ball.y += ball.dy;
+        ball.move()
         requestAnimationFrame(draw);
         }
     // setInterval(draw, 10)
