@@ -5,12 +5,12 @@
     <title>Gamedev Canvas Workshop</title>
     <style>
     	* { padding: 0; margin: 0; }
-    	canvas { background: #eee; display: block; margin: 0 auto; }
+    	canvas { background: rgb(247, 176, 176); display: block; margin: 0 auto; }
     </style>
 </head>
 <body>
 
-<canvas id="myCanvas" width="480" height="320"></canvas>
+<canvas id="myCanvas" width="550" height="400"></canvas>
 
 <script>
 	// JavaScript code goes here
@@ -22,8 +22,8 @@
 
     const ballRadius = 10;
 
-    let dx = 2;
-    let dy = -2;
+    let dx = 3;
+    let dy = -3;
 
     const paddleHeight = 10;
     const paddleWidth = 75;
@@ -32,8 +32,8 @@
     const rightPressed = false;
     const leftPressed = false;
 
-    const brickRowCount = 3;
-    const brickColumnCount = 5;
+    const brickRowCount = 5;
+    const brickColumnCount = 6;
     const brickWidth = 75;
     const brickHeight = 20;
     const brickPadding = 10;
@@ -69,6 +69,16 @@
                         dy = -dy;
                         b.status = 0;
                         score++;
+                        if(dx > 1) {
+                            dx = dx + .25
+                        } else {
+                            dx = dx - .25
+                        }
+                        if(dy > 1) {
+                            dy = dy + .25
+                        } else {
+                            dy = dy - .25
+                        }
                         if(score == brickRowCount*brickColumnCount) {
                             alert("YOU WIN, CONGRATULATIONS!");
                             document.location.reload();
@@ -131,7 +141,7 @@
     function drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-        ctx.fillStyle = "#FF95DD";
+        ctx.fillStyle = "#41dd08";
         ctx.fill();
         ctx.closePath();
     }
