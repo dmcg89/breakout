@@ -39,28 +39,36 @@
         }
     }
 
-    // function drawBall() {
-        // ctx.beginPath();
-        // ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
-        // ctx.fillStyle = "#FF0000";
-        // ctx.fill();
-        // ctx.closePath();
+    class Paddle {
+        constructor(width = 75, height = 10, color="#41dd08") {
+            this.width = width
+            this.height = height
+            this.color = color
+            this.x = (canvas.width-this.width) / 2
+        }
+        render(ctx) {
+            ctx.beginPath();
+            ctx.rect(this.x, canvas.height-this.height, this.width, this.height);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+    // function drawPaddle() {
+    //     ctx.beginPath();
+    //     ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+    //     ctx.fillStyle = "#41dd08";
+    //     ctx.fill();
+    //     ctx.closePath();
     // }
 
-
     const ball = new Ball(canvas.width/2, canvas.height-30);
+    const paddle = new Paddle();
 
-    // let x = canvas.width/2;
-    // let y = canvas.height-30;
-
-    // const ballRadius = 10;
-
-    // let dx = 3;
-    // let dy = -3;
-
-    const paddleHeight = 10;
-    const paddleWidth = 75;
-    let paddleX = (canvas.width-paddleWidth) / 2;
+    // const paddleHeight = 10;
+    // const paddleWidth = 75;
+    // let paddleX = (canvas.width-paddleWidth) / 2;
 
     const rightPressed = false;
     const leftPressed = false;
@@ -143,7 +151,7 @@
     function mouseMoveHandler(e) {
         var relativeX = e.clientX - canvas.offsetLeft;
         if(relativeX > 0 && relativeX < canvas.width) {
-            paddleX = relativeX - paddleWidth/2;
+            paddle.x = relativeX - paddle.width/2;
         }
     }
 
@@ -163,14 +171,6 @@
         else if(e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = false;
         }
-    }
-
-    function drawPaddle() {
-        ctx.beginPath();
-        ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-        ctx.fillStyle = "#41dd08";
-        ctx.fill();
-        ctx.closePath();
     }
 
     function drawBricks() {
@@ -196,7 +196,8 @@
         drawBricks();
         // drawBall();
         ball.render(ctx);
-        drawPaddle();
+        // drawPaddle();
+        paddle.render(ctx);
         drawScore();
         drawLives();
         collisionDetection();
@@ -208,7 +209,7 @@
             ball.dy = -ball.dy;
         }
         else if(ball.y + ball.dy > canvas.height-ball.radius) {
-            if(ball.x > paddleX && ball.x < paddleX + paddleWidth) {
+            if(ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
             ball.dy = -ball.dy;
             }
             else {
@@ -222,56 +223,23 @@
                 ball.y = canvas.height-30;
                 ball.dx = 3;
                 ball.dy = -3;
-                paddleX = (canvas.width-paddleWidth)/2;
+                paddle.x = (canvas.width-paddle.width)/2;
             }
             }
         }
         
-        if(rightPressed && paddleX < canvas.width-paddleWidth) {
-            paddleX += 7;
+        if(rightPressed && paddle.x < canvas.width-paddle.width) {
+            paddle.x += 7;
         }
-        else if(leftPressed && paddleX > 0) {
-            paddleX -= 7;
+        else if(leftPressed && paddle.x > 0) {
+            paddle.x -= 7;
         }
-        
-        // ball.x += ball.dx;
-        // ball.y += ball.dy;
+
         ball.move()
         requestAnimationFrame(draw);
         }
-    // setInterval(draw, 10)
-    // var interval = setInterval(draw, 10);
     draw();
 
-
-    // function draw() {
-    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //     ctx.beginPath();
-    //     ctx.arc(x, y, 10, 0, Math.PI*2);
-    //     ctx.fillStyle = "#0095DD";
-    //     ctx.fill();
-    //     ctx.closePath();
-    //     x += dx;
-    //     y += dy;
-    // }
-
-    // ctx.beginPath();
-    // ctx.rect(20, 40, 50, 50);
-    // ctx.fillStyle = "#FF0000";
-    // ctx.fill();
-    // ctx.closePath();
-
-    // ctx.beginPath();
-    // ctx.arc(240, 160, 20, 0, Math.PI*2, false);
-    // ctx.fillStyle = "green";
-    // ctx.fill();
-    // ctx.closePath();
-
-    // ctx.beginPath();
-    // ctx.rect(160, 10, 100, 40);
-    // ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
-    // ctx.stroke();
-    // ctx.closePath();
 </script>
 
 </body>
