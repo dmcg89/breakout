@@ -45,30 +45,88 @@ class Paddle {
   }
 }
 
-// class Brick {
+class Bricks {
 
-//   constructor() {
-//     this.rowCount = 5
-//     this.columnCount = 6
-//     this.width = 75
-//     this.height = 20
-//     this.padding = 10
+  constructor() {
+    this.rowCount = 5
+    this.columnCount = 6
+    this.width = 75
+    this.height = 20
+    this.padding = 10
+    this.offsetTop = 30
+    this.offsetLeft = 30
+    this.hue = 0;
+    this.bricks = []
+  }
 
+  randomHslaColors() {
+    this.hue = Math.random() * 360;
+    return `hsla(${this.hue}, 100%, 30%, 0.7)`
+  }
+
+  arrBuild() {
+    for (let c = 0; c < this.columnCount; c += 1) {
+      this.bricks[c] = [];
+      for (let r = 0; r < this.rowCount; r += 1) {
+        const color = this.randomHslaColors();
+        this.bricks[c][r] = {
+          x: 0,
+          y: 0,
+          status: 3,
+          color,
+        };
+      }
+    }
+  }
+
+  render(ctx) {
+    for (let c = 0; c < this.columnCount; c += 1) {
+      for (let r = 0; r < this.rowCount; r += 1) {
+        if (this.bricks[c][r].status >= 1) {
+          const brickX = (c * (this.width + this.padding)) + this.offsetLeft;
+          const brickY = (r * (this.height + this.padding)) + this.offsetTop;
+          this.bricks[c][r].x = brickX;
+          this.bricks[c][r].y = brickY;
+          ctx.beginPath();
+          ctx.rect(brickX, brickY, this.width, this.height);
+          ctx.fillStyle = this.bricks[c][r].color;
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+    }
+  }
+}
+// function drawBricks() {
+//   for (let c = 0; c < brickColumnCount; c += 1) {
+//     for (let r = 0; r < brickRowCount; r += 1) {
+//       if (bricks[c][r].status >= 1) {
+//         const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+//         const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+//         bricks[c][r].x = brickX;
+//         bricks[c][r].y = brickY;
+//         ctx.beginPath();
+//         ctx.rect(brickX, brickY, brickWidth, brickHeight);
+//         ctx.fillStyle = bricks[c][r].color;
+//         ctx.fill();
+//         ctx.closePath();
+//       }
+//     }
 //   }
-
 // }
 
-const brickRowCount = 5;
-const brickColumnCount = 6;
-const brickWidth = 75;
-const brickHeight = 20;
-const brickPadding = 10;
-const brickOffsetTop = 30;
-const brickOffsetLeft = 30;
+// const brickRowCount = 5;
+// const brickColumnCount = 6;
+// const brickWidth = 75;
+// const brickHeight = 20;
+// const brickPadding = 10;
+// const brickOffsetTop = 30;
+// const brickOffsetLeft = 30;
 
 
 const ball = new Ball(canvas.width / 2, canvas.height - 30);
 const paddle = new Paddle(canvas.width, canvas.height);
+const bricks = new Bricks();
 
 let rightPressed = false;
 let leftPressed = false;
@@ -78,33 +136,16 @@ let lives = 3;
 
 // var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
 // var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+// const bricks = [];
 
-function randomHslaColors() {
-  const hue = Math.random() * 360;
-  return `hsla(${hue}, 100%, 30%, 0.7)`
-}
-
-const bricks = [];
-
-for (let c = 0; c < brickColumnCount; c += 1) {
-  bricks[c] = [];
-  for (let r = 0; r < brickRowCount; r += 1) {
-    const color = randomHslaColors();
-    bricks[c][r] = {
-      x: 0,
-      y: 0,
-      status: 3,
-      color,
-    };
-  }
-}
+bricks.arrBuild()
 
 function collisionDetection() {
-  for (let c = 0; c < brickColumnCount; c += 1) {
-    for (let r = 0; r < brickRowCount; r += 1) {
-      const b = bricks[c][r];
+  for (let c = 0; c < bricks.columnCount; c += 1) {
+    for (let r = 0; r < bricks.rowCount; r += 1) {
+      const b = bricks.bricks[c][r];
       if (b.status >= 1) {
-        if (ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
+        if (ball.x > b.x && ball.x < b.x + bricks.width && ball.y > b.y && ball.y < b.y + bricks.height) {
           ball.dy = -ball.dy;
           // b.status = 0;
           b.status -= 1
@@ -119,7 +160,7 @@ function collisionDetection() {
           } else {
             ball.dy -= 0.25
           }
-          if (score === brickRowCount * brickColumnCount) {
+          if (score === bricks.rowCount * bricks.columnCount) {
             alert('YOU WIN, CONGRATULATIONS!');
             document.location.reload();
             clearInterval(interval); // Needed for Chrome to end game
@@ -168,27 +209,10 @@ document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
 document.addEventListener('mousemove', mouseMoveHandler, false);
 
-function drawBricks() {
-  for (let c = 0; c < brickColumnCount; c += 1) {
-    for (let r = 0; r < brickRowCount; r += 1) {
-      if (bricks[c][r].status >= 1) {
-        const brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft;
-        const brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
-        bricks[c][r].x = brickX;
-        bricks[c][r].y = brickY;
-        ctx.beginPath();
-        ctx.rect(brickX, brickY, brickWidth, brickHeight);
-        ctx.fillStyle = bricks[c][r].color;
-        ctx.fill();
-        ctx.closePath();
-      }
-    }
-  }
-}
-
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBricks();
+  // drawBricks();
+  bricks.render(ctx);
   // drawBall();
   ball.render(ctx);
   // drawPaddle();
