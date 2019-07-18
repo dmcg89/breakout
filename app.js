@@ -46,7 +46,6 @@ class Paddle {
 }
 
 class Bricks {
-
   constructor() {
     this.rowCount = 5
     this.columnCount = 6
@@ -97,41 +96,38 @@ class Bricks {
     }
   }
 }
-// function drawBricks() {
-//   for (let c = 0; c < brickColumnCount; c += 1) {
-//     for (let r = 0; r < brickRowCount; r += 1) {
-//       if (bricks[c][r].status >= 1) {
-//         const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-//         const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-//         bricks[c][r].x = brickX;
-//         bricks[c][r].y = brickY;
-//         ctx.beginPath();
-//         ctx.rect(brickX, brickY, brickWidth, brickHeight);
-//         ctx.fillStyle = bricks[c][r].color;
-//         ctx.fill();
-//         ctx.closePath();
-//       }
-//     }
-//   }
+
+class Score {
+  constructor() {
+    this.score = 0
+    this.x = 8
+    this.y = 20
+    this.color = '#0095DD'
+    this.font = '16px Arial'
+  }
+
+  render(ctx) {
+    ctx.font = this.font;
+    ctx.fillStyle = this.color;
+    ctx.fillText('Score: '+this.score, this.x, this.y)
+  }
+}
+
+// function drawScore() {
+//   ctx.font = '16px Arial';
+//   ctx.fillStyle = '#0095DD';
+//   ctx.fillText("Score: "+score, 8, 20);
 // }
-
-// const brickRowCount = 5;
-// const brickColumnCount = 6;
-// const brickWidth = 75;
-// const brickHeight = 20;
-// const brickPadding = 10;
-// const brickOffsetTop = 30;
-// const brickOffsetLeft = 30;
-
 
 const ball = new Ball(canvas.width / 2, canvas.height - 30);
 const paddle = new Paddle(canvas.width, canvas.height);
 const bricks = new Bricks();
+const score = new Score();
 
 let rightPressed = false;
 let leftPressed = false;
 
-let score = 0;
+// let score = 0;
 let lives = 3;
 
 // var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
@@ -149,7 +145,7 @@ function collisionDetection() {
           ball.dy = -ball.dy;
           // b.status = 0;
           b.status -= 1
-          score += 1;
+          score.score += 1;
           if (ball.dx > 1) {
             ball.dx += 0.25
           } else {
@@ -160,7 +156,7 @@ function collisionDetection() {
           } else {
             ball.dy -= 0.25
           }
-          if (score === bricks.rowCount * bricks.columnCount) {
+          if (score.score === bricks.rowCount * bricks.columnCount) {
             alert('YOU WIN, CONGRATULATIONS!');
             document.location.reload();
             clearInterval(interval); // Needed for Chrome to end game
@@ -171,11 +167,6 @@ function collisionDetection() {
   }
 }
 
-function drawScore() {
-  ctx.font = '16px Arial';
-  ctx.fillStyle = '#0095DD';
-  ctx.fillText("Score: "+score, 8, 20);
-}
 function drawLives() {
   ctx.font = '16px Arial';
   ctx.fillStyle = '#0095DD';
@@ -217,7 +208,9 @@ function draw() {
   ball.render(ctx);
   // drawPaddle();
   paddle.render(ctx);
-  drawScore();
+  // drawScore();
+  score.render(ctx);
+
   drawLives();
   collisionDetection();
 
